@@ -143,7 +143,9 @@ static cl::opt<SPIRV::BIsRepresentation> BIsRepresentation(
         clEnumValN(SPIRV::BIsRepresentation::OpenCL12, "CL1.2", "OpenCL C 1.2"),
         clEnumValN(SPIRV::BIsRepresentation::OpenCL20, "CL2.0", "OpenCL C 2.0"),
         clEnumValN(SPIRV::BIsRepresentation::SPIRVFriendlyIR, "SPV-IR",
-                   "SPIR-V Friendly IR")),
+                   "SPIR-V Friendly IR"),
+        clEnumValN(SPIRV::BIsRepresentation::SPIRVFriendlyIRwithoutTET, "SPV-IR-without-TET",
+                   "SPIR-V Friendly IR without TargetExtTy")),
     cl::init(SPIRV::BIsRepresentation::OpenCL12));
 
 static cl::opt<bool>

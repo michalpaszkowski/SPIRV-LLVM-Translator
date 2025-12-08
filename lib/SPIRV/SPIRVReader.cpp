@@ -3593,7 +3593,9 @@ Instruction *SPIRVToLLVM::transBuiltinFromInst(const std::string &FuncName,
     }
   }
 
-  if (BM->getDesiredBIsRepresentation() != BIsRepresentation::SPIRVFriendlyIR)
+  if (BM->getDesiredBIsRepresentation() != BIsRepresentation::SPIRVFriendlyIR &&
+      BM->getDesiredBIsRepresentation() !=
+          BIsRepresentation::SPIRVFriendlyIRwithoutTET)
     mangleOpenClBuiltin(FuncName, ArgTys, MangledName);
   else
     MangledName =
@@ -3853,7 +3855,7 @@ bool SPIRVToLLVM::translate() {
   transGeneratorMD();
   if (!lowerBuiltins(BM, M))
     return false;
-  if (BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIR) {
+  if (BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIR || BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIRwithoutTET) {
     SPIRVWord SrcLangVer = 0;
     BM->getSourceLanguage(&SrcLangVer);
     bool IsCpp = SrcLangVer == kOCLVer::CL21;
@@ -4386,7 +4388,7 @@ bool SPIRVToLLVM::transDecoration(SPIRVValue *BV, Value *V) {
   transMemAliasingINTELDecorations(BV, V);
 
   // Decoration metadata is only enabled in SPIR-V friendly mode
-  if (BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIR)
+  if (BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIR || BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIRwithoutTET)
     transDecorationsToMetadata(BV, V);
 
   DbgTran->transDbgInfo(BV, V);
@@ -4549,7 +4551,7 @@ bool SPIRVToLLVM::transMetadata() {
     transFPGAFunctionMetadata(BF, F);
 
     // Decoration metadata is only enabled in SPIR-V friendly mode
-    if (BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIR)
+    if (BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIR || BM->getDesiredBIsRepresentation() == BIsRepresentation::SPIRVFriendlyIRwithoutTET)
       transFunctionDecorationsToMetadata(BF, F);
 
     if (F->getCallingConv() != CallingConv::SPIR_KERNEL)

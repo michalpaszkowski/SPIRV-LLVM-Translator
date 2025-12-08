@@ -98,7 +98,12 @@ enum class ExtensionID : uint32_t {
   Last,
 };
 
-enum class BIsRepresentation : uint32_t { OpenCL12, OpenCL20, SPIRVFriendlyIR };
+enum class BIsRepresentation : uint32_t {
+  OpenCL12,
+  OpenCL20,
+  SPIRVFriendlyIR,
+  SPIRVFriendlyIRwithoutTET
+};
 
 enum class FPContractMode : uint32_t { On, Off, Fast };
 

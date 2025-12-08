@@ -1115,6 +1115,7 @@ void addSPIRVBIsLoweringPass(ModulePassManager &PassMgr,
     PassMgr.addPass(SPIRVToOCL20Pass());
     break;
   case SPIRV::BIsRepresentation::SPIRVFriendlyIR:
+  case SPIRV::BIsRepresentation::SPIRVFriendlyIRwithoutTET:
     // nothing to do, already done
     break;
   }
@@ -1131,6 +1132,7 @@ llvm::createSPIRVBIsLoweringPass(Module &M,
   case SPIRV::BIsRepresentation::OpenCL20:
     return createSPIRVToOCL20Legacy();
   case SPIRV::BIsRepresentation::SPIRVFriendlyIR:
+  case SPIRV::BIsRepresentation::SPIRVFriendlyIRwithoutTET:
     // nothing to do, already done
     return nullptr;
   }

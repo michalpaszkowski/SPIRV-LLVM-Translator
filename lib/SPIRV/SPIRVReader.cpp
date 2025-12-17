@@ -1204,6 +1204,23 @@ Value *SPIRVToLLVM::transConvertInst(SPIRVValue *BV, Function *F,
       CO = Instruction::IntToPtr;
     }
     break;
+  case OpConvertPtrToU: {
+    // If Src is a SPIR-V object represented as a TargetExtType, convert it to
+    // a generic/global pointer first via __spirv_object_to_generic_ptr, then
+    // perform ptrtoint to the destination integer type.
+    if (!Src->getType()->isPointerTy() && isa<TargetExtType>(Src->getType())) {
+      assert(BB && "Cannot materialize builtin call without insertion point");
+      Type *RetPtrTy = Type::getInt8PtrTy(*Context, SPIRAS_Global);
+      FunctionType *FTy = FunctionType::get(RetPtrTy, {Src->getType()}, false);
+      FunctionCallee Callee =
+          M->getOrInsertFunction("__spirv_object_to_generic_ptr", FTy);
+      if (auto *FDecl = dyn_cast<Function>(Callee.getCallee()))
+        FDecl->setCallingConv(CallingConv::SPIR_FUNC);
+      Value *ObjPtr = CallInst::Create(Callee, {Src}, "", BB);
+      return CastInst::Create(Instruction::PtrToInt, ObjPtr, Dst, BV->getName(),
+                              BB);
+    }
+  }
   default:
     CO = static_cast<CastInst::CastOps>(OpCodeMap::rmap(BC->getOpCode()));
   }
